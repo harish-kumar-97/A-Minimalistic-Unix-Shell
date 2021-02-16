@@ -12,5 +12,6 @@ int shell_exit(char **args);
 int shell_pwd(char **args);
 int shell_echo(char **args);
 int shell_mkdir(char **args);
+int shell_clear(char **args);
 
-#define BUILTIN_COMMANDS 6
+#define BUILTIN_COMMANDS 7
