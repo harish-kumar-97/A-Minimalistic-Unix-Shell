@@ -10,16 +10,18 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 
-#define BUILTIN_COMMANDS 5
+#define BUILTIN_COMMANDS 6
 
 /* environmental variables */
 char PWD[1024]; // present working directory
 char PATH[1024]; // path to find the commands
 
 /* built-in command names */
-char *builtin[] = {"cd", "exit", "help", "pwd", "echo"};
+char *builtin[] = {"cd", "exit", "help", "pwd", "echo", "mkdir"};
 
 int shell_cd(char **args) {
         if (args[1] == NULL) {
@@ -101,12 +103,31 @@ char *read_command_line(void) {
         return command;
 }
 
+int shell_mkdir(char **args) {
+        ++args;
+       if(*args == NULL) {
+                fprintf(stderr, "minsh; missing directory name\n");
+               return 1;
+       }
+       while(*args != NULL) {
+               // create the directory
+                if(mkdir(*args, 0755) < 0) {
+                        fprintf(stderr, "minsh: %s - ", *args);
+                        perror("");
+                        continue;
+                }
+                ++args;
+       }
+       return 1;
+}
+
 int (* builtin_function[]) (char **) = {
         &shell_cd, 
         &shell_exit,
         &shell_help,
         &shell_pwd,
-        &shell_echo
+        &shell_echo,
+        &shell_mkdir
 };
 
 char **split_command_line(char *command) {
@@ -251,6 +272,13 @@ int shell_execute(char **args) {
                                 return 1;
                         }
                         if(dup2(err, 2) < 0) {
+int (* builtin_function[]) (char **) = {
+        &shell_cd, 
+        &shell_exit,
+        &shell_help,
+        &shell_pwd,
+        &shell_echo
+};
                                 perror("minsh");
                                 return 1;
                         }
