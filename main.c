@@ -4,17 +4,10 @@
  * Description: A minimalistic version of the unix shell
  *              implemented using C programming language.
  ***************************************************************/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#define BUILTIN_COMMANDS 6
+#ifndef COMMON_H
+#define COMMON_H
+#include "common.h"
+#endif
 
 /* environmental variables */
 char PWD[1024]; // present working directory
@@ -22,39 +15,6 @@ char PATH[1024]; // path to find the commands
 
 /* built-in command names */
 char *builtin[] = {"cd", "exit", "help", "pwd", "echo", "mkdir"};
-
-int shell_cd(char **args) {
-        if (args[1] == NULL) {
-                fprintf(stderr, "minsh: atleast one argument is required.\n");
-        } else if (chdir(args[1]) < 0) {
-                perror("minsh");
-        }
-        // update present working directory
-        getcwd(PWD, sizeof(PWD));
-        return 1;
-}
-
-int shell_exit(char **args) {
-        return 0;
-}
-
-int shell_pwd(char **args) {
-        printf("%s\n", PWD);
-        return 1;
-}
-
-int shell_echo(char **args) {
-        int i = 1;
-        while(1) {
-                // end of arguments
-                if(args[i] == NULL) {
-                        break;
-                }
-                printf("%s ", args[i]);
-                i++;
-        }
-        printf("\n");
-}
 
 int shell_help(char **args) {
         printf("\nA mini implementation of the Unix Shell.\n");
@@ -101,24 +61,6 @@ char *read_command_line(void) {
                 c = getchar();
         }
         return command;
-}
-
-int shell_mkdir(char **args) {
-        ++args;
-       if(*args == NULL) {
-                fprintf(stderr, "minsh; missing directory name\n");
-               return 1;
-       }
-       while(*args != NULL) {
-               // create the directory
-                if(mkdir(*args, 0755) < 0) {
-                        fprintf(stderr, "minsh: %s - ", *args);
-                        perror("");
-                        continue;
-                }
-                ++args;
-       }
-       return 1;
 }
 
 int (* builtin_function[]) (char **) = {
