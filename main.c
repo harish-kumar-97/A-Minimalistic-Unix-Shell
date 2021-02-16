@@ -1,5 +1,5 @@
 /****************************************************************
- * File: miniShell.c
+ * File: main.c
  * Author: Harish
  * Description: A minimalistic version of the unix shell
  *              implemented using C programming language.
@@ -14,7 +14,7 @@ char PWD[1024]; // present working directory
 char PATH[1024]; // path to find the commands
 
 /* built-in command names */
-char *builtin[] = {"cd", "exit", "help", "pwd", "echo", "mkdir", "clear"};
+char *builtin[] = {"cd", "exit", "help", "pwd", "echo", "mkdir", "clear", "cat"};
 
 int shell_help(char **args) {
         printf("\nA mini implementation of the Unix Shell.\n");
@@ -70,7 +70,8 @@ int (* builtin_function[]) (char **) = {
         &shell_pwd,
         &shell_echo,
         &shell_mkdir,
-        &shell_clear
+        &shell_clear,
+        &shell_cat
 };
 
 char **split_command_line(char *command) {
@@ -215,13 +216,6 @@ int shell_execute(char **args) {
                                 return 1;
                         }
                         if(dup2(err, 2) < 0) {
-int (* builtin_function[]) (char **) = {
-        &shell_cd, 
-        &shell_exit,
-        &shell_help,
-        &shell_pwd,
-        &shell_echo
-};
                                 perror("minsh");
                                 return 1;
                         }
@@ -263,7 +257,6 @@ void shell_loop(void) {
         char *command_line;
         char **arguments;
         status = 1;
-
         while(status) {
                 printf("MINI-SHELL: ");
                 command_line = read_command_line();
