@@ -14,7 +14,7 @@ char PWD[1024]; // present working directory
 char PATH[1024]; // path to find the commands
 
 /* built-in command names */
-char *builtin[] = {"cd", "exit", "help", "pwd", "echo", "mkdir", "clear", "cat"};
+char *builtin[] = {"cd", "exit", "help", "pwd", "echo", "mkdir", "clear", "cat", "mv"};
 
 int shell_help(char **args) {
         printf("\nA mini implementation of the Unix Shell.\n");
@@ -71,7 +71,8 @@ int (* builtin_function[]) (char **) = {
         &shell_echo,
         &shell_mkdir,
         &shell_clear,
-        &shell_cat
+        &shell_cat,
+	&shell_mv
 };
 
 char **split_command_line(char *command) {
